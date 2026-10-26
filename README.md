@@ -2,6 +2,26 @@
 
 An offline ambient sound mixer for Linux and macOS.
 
+## Installation
+
+### Homebrew (macOS)
+
+```sh
+brew install nendix/tap/noizen
+```
+
+### From source
+
+Requires stable Rust. On Linux, install `pkg-config` and `libasound2-dev`
+(Debian/Ubuntu) or `alsa-lib-devel` (Fedora) first.
+
+```sh
+cargo install --git https://github.com/nendix/noizen --locked
+```
+
+Linux requires ALSA libraries and configured audio output at runtime; macOS uses
+system CoreAudio.
+
 ## Usage
 
 ```sh
