@@ -15,7 +15,7 @@ targets = [
   "aarch64-unknown-linux-gnu",
 ]
 unix-archive = ".tar.gz"
-include = ["target/release-extras/assets", "target/release-extras/completions", "docs", "AGENTS.md"]
+include = ["target/release-extras/assets"]
 github-build-setup = "../dist-build-setup.yml"
 
 # Native builds avoid cross-compiling against the wrong ALSA libraries.

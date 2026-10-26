@@ -14,16 +14,13 @@ dist generate --check
 Edit `dist-workspace.toml` and `.github/dist-build-setup.yml`, then regenerate.
 Do not hand-edit `.github/workflows/release.yml`. Keep the local dist version in
 sync with `cargo-dist-version`. The setup hook installs ALSA before compiling,
-runs quality checks, and prepares recording notices and static completions.
+runs quality checks, and prepares recording notices.
 
 Local archive check (the CI setup hook is not run by local `dist build`):
 
 ```sh
-mkdir -p target/release-extras/assets target/release-extras/completions
+mkdir -p target/release-extras/assets
 cp assets/README.md assets/CC-BY-4.0.txt target/release-extras/assets/
-for shell in bash zsh fish; do
-  cargo run --locked --profile dist -- completions "$shell" > "target/release-extras/completions/noizen.$shell"
-done
 dist build --artifacts=all --target aarch64-apple-darwin
 ```
 
@@ -54,16 +51,19 @@ checking their contents.
 
 Pushing code or tags alone never publishes. Pull requests run release-plan
 checks only. The default dispatch tag is `dry-run`. Prerelease versions do not
-update Homebrew by default. Keep MVP acceptance limitations visible in release
-notes; packaging does not prove audible playback.
+update Homebrew by default. Track remaining validation in
+[issue #1](https://github.com/nendix/noizen/issues/1); packaging does not prove
+audible playback.
 
 ## Artifacts and installation
 
 Four native GNU/macOS archives, per-archive SHA-256 files, `sha256.sum`, a source
 archive and a Homebrew formula are generated. Binary archives contain
-`assets/README.md`, the CC BY legal text, shell completion scripts, and
-documentation. Homebrew retains extras under `$(brew --prefix)/share/noizen/`;
-install completions using [the shell setup guide](completions.md).
+the binary, README, `assets/README.md` and the CC BY legal text. Developer docs,
+`AGENTS.md` and completion scripts are not bundled. Homebrew retains recording
+notices under `$(brew --prefix)/share/noizen/`. For completions,
+generate them with `noizen completions` as described in
+[the shell setup guide](completions.md).
 
 After the first successful published release and tap update, macOS users can run:
 

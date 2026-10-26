@@ -1,30 +1,9 @@
 # noizen
 
-An offline ambient sound mixer for Linux and macOS. Runs in your terminal until
-**Ctrl-C**—no downloads, external player, daemon, or TUI.
+An offline ambient sound mixer for Linux and macOS. Playback stays in the
+terminal until **Ctrl-C**, with no downloads or external player.
 
-**MVP candidate:** listening checks, Linux hardware playback, resource-budget
-agreement, and published releases remain pending. See [MVP status](docs/mvp.md).
-
-## Install
-
-[Prebuilt releases and macOS Homebrew setup](docs/releases.md) are prepared but
-not published yet. For now, build from source.
-
-Requires stable Rust. Linux builds also need `pkg-config libasound2-dev`
-(Debian/Ubuntu) or `pkgconf-pkg-config alsa-lib-devel` (Fedora).
-
-```sh
-cargo build --release
-mkdir -p ~/.local/bin
-install -m 755 target/release/noizen ~/.local/bin/noizen
-```
-
-Add `~/.local/bin` to your PATH. Linux runtime requires `libasound.so.2` and a
-configured ALSA output (possibly PipeWire/PulseAudio ALSA integration).
-macOS uses system CoreAudio.
-
-## Use
+## Usage
 
 ```sh
 noizen sounds
@@ -34,13 +13,9 @@ noizen play pink:60 green:40
 ```
 
 Sounds: **white, pink, brown, blue, violet, green, rain, fireplace**.
-Green is pink noise shaped around 500 Hz. Levels are integers from 0–100;
-both individual levels and overall `--volume` default to **100%**.
-**Start with low device volume; 100% is not a safe-loudness guarantee.**
-
-The mix averages selected sources to avoid clipping. Noise colors are
-[loudness-balanced](docs/noise-calibration.md); recordings retain their dynamics,
-so fireplace is quieter at equal levels.
+Green is pink noise shaped around 500 Hz. Levels range from 0–100; individual
+levels and overall `--volume` default to **100%**. Start with low device volume.
+The mix averages sources to prevent clipping; fireplace is naturally quieter.
 
 ## Presets
 
@@ -51,15 +26,29 @@ noizen preset play cozy --volume 60
 noizen preset remove cozy
 ```
 
-Presets save individual levels, never overall volume. Existing names cannot be
-overwritten; remove first. Names allow 1–64 ASCII letters, digits, `-` and `_`.
+Presets store individual levels, never overall volume. Names allow 1–64 ASCII
+letters, digits, `-` and `_`. Existing presets cannot be overwritten.
 
-Stored under `$XDG_CONFIG_HOME/noizen/presets` (default `~/.config/noizen/presets`)
-on Linux, or `~/Library/Application Support/noizen/presets` on macOS.
+Default directory: `~/.config/noizen/presets` on both platforms. Linux also
+respects `$XDG_CONFIG_HOME`. Existing macOS presets in
+`~/Library/Application Support/noizen/presets` must be copied to the new directory;
+noizen does not move or delete them automatically.
 
-## More
+## Build
 
-- [Bash, Zsh and Fish completions](docs/completions.md)
-- [Recording sources, licenses and attribution](assets/README.md)—retain these
-  notices and the [CC BY license](assets/CC-BY-4.0.txt) when redistributing.
-- [Development checks](AGENTS.md) · [Validation evidence](docs/audio-validation.md)
+With stable Rust: `cargo build --release`.
+Linux builds require `pkg-config` and ALSA headers (`libasound2-dev` on
+Debian/Ubuntu, `alsa-lib-devel` on Fedora). Runtime needs `libasound.so.2` and
+configured audio output; macOS uses system CoreAudio.
+
+## Licensing
+
+No source-code license has been declared for noizen. The recording licenses do
+not grant a license to the application itself.
+
+Rain is **CC BY 4.0**; fireplace is **Public Domain**. See
+[recording sources and attribution](assets/README.md). Redistributed recordings
+must retain the applicable attribution and [license notice](assets/CC-BY-4.0.txt).
+
+[Completions](docs/completions.md) · [Releases](docs/releases.md) ·
+[Noise calibration](docs/noise-calibration.md)

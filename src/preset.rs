@@ -15,9 +15,17 @@ struct Preset {
 }
 
 pub fn directory() -> Result<PathBuf> {
-    let dirs = directories::ProjectDirs::from("", "", "noizen")
-        .ok_or("cannot determine platform configuration directory")?;
-    Ok(dirs.config_dir().join("presets"))
+    #[cfg(target_os = "macos")]
+    let config = directories::BaseDirs::new()
+        .ok_or("cannot determine home directory")?
+        .home_dir()
+        .join(".config/noizen");
+    #[cfg(not(target_os = "macos"))]
+    let config = directories::ProjectDirs::from("", "", "noizen")
+        .ok_or("cannot determine platform configuration directory")?
+        .config_dir()
+        .to_owned();
+    Ok(config.join("presets"))
 }
 fn path(dir: &Path, label: &str) -> Result<PathBuf> {
     if label.is_empty()
@@ -98,6 +106,17 @@ pub fn remove(dir: &Path, label: &str) -> Result<()> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[cfg(target_os = "macos")]
+    #[test]
+    fn macos_presets_use_dot_config() {
+        let home = directories::BaseDirs::new().unwrap();
+        assert_eq!(
+            directory().unwrap(),
+            home.home_dir().join(".config/noizen/presets")
+        );
+    }
+
     #[test]
     fn persistence_and_no_overwrite() {
         let tmp = tempfile::tempdir().unwrap();

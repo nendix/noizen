@@ -1,7 +1,8 @@
 # Embedded recordings and attribution
 
-These recordings are distributed with the executable, independently of the Rust
-source license. No Blanket application code is copied.
+These licenses cover the recordings only, not noizen's source code. No
+source-code license has been declared for noizen. No Blanket application code
+is copied; Blanket's application license is not the license for these recordings.
 
 ## Rain
 
@@ -39,7 +40,6 @@ SHA-256:
 - fireplace.ogg: a6395379a32c2dc30dd870c4571ded4a5311435aacfe354b3a82a9b3ab98620b
 
 noizen decodes to mono 44.1 kHz and overlaps the last/first 100 ms with a linear
-crossfade in memory; the embedded files remain unchanged. Listening verification
-of loop continuity is still required. Distributions must retain this attribution
-and the CC BY license notice. This attribution is embedded in `noizen --help`;
+crossfade in memory; the embedded files remain unchanged. Distributions must
+retain this attribution and the CC BY license notice. This attribution is embedded in `noizen --help`;
 binary distributors should also ship these notices alongside the executable.

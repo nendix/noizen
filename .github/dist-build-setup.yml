@@ -14,8 +14,5 @@
     cargo fmt --check
     cargo clippy --locked --all-targets -- -D warnings
     cargo test --locked
-    mkdir -p target/release-extras/assets target/release-extras/completions
+    mkdir -p target/release-extras/assets
     cp assets/README.md assets/CC-BY-4.0.txt target/release-extras/assets/
-    for shell in bash zsh fish; do
-      cargo run --locked --profile dist -- completions "$shell" > "target/release-extras/completions/noizen.$shell"
-    done
