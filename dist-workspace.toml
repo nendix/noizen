@@ -1,0 +1,26 @@
+[workspace]
+members = ["cargo:."]
+
+[dist]
+cargo-dist-version = "0.33.1"
+ci = "github"
+dispatch-releases = true
+installers = ["homebrew"]
+tap = "nendix/homebrew-tap"
+publish-jobs = ["homebrew"]
+targets = [
+  "aarch64-apple-darwin",
+  "x86_64-apple-darwin",
+  "x86_64-unknown-linux-gnu",
+  "aarch64-unknown-linux-gnu",
+]
+unix-archive = ".tar.gz"
+include = ["target/release-extras/assets", "target/release-extras/completions", "docs", "AGENTS.md"]
+github-build-setup = "../dist-build-setup.yml"
+
+# Native builds avoid cross-compiling against the wrong ALSA libraries.
+[dist.github-custom-runners]
+aarch64-apple-darwin = { runner = "macos-15", host = "aarch64-apple-darwin" }
+x86_64-apple-darwin = { runner = "macos-15-intel", host = "x86_64-apple-darwin" }
+x86_64-unknown-linux-gnu = { runner = "ubuntu-24.04", host = "x86_64-unknown-linux-gnu" }
+aarch64-unknown-linux-gnu = { runner = "ubuntu-24.04-arm", host = "aarch64-unknown-linux-gnu" }

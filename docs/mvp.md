@@ -117,8 +117,10 @@ Still required: human listening to each sound/blends and multiple recording loop
 boundaries; confirm acoustic shutdown/device release and assess listening levels
 with the agreed 100% default; Linux hardware playback; agreed numerical performance budgets; remote
 CI on this revision and published platform/architecture release binaries.
-A manual-only release workflow prepares four platform/architecture archives,
-checksums and a macOS Homebrew formula for the existing tap; it creates a draft,
-not a public release. See [release instructions](releases.md). The workflow and
-Homebrew installation have not yet been exercised on GitHub. No push, tap update
-or release publication was performed.
+cargo-dist 0.33.1 generates the release workflow, four platform/architecture
+archives, checksums and a Homebrew formula for the existing tap. Publishing is
+manual-only: dispatch `dry-run` to build without publishing, or a real version
+to publish the release and update the tap using `HOMEBREW_TAP_TOKEN`. Pull requests
+only check the release plan. See [release instructions](releases.md). The GitHub
+workflow and Homebrew installation remain unverified. No push, tap update or
+release publication was performed.

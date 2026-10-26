@@ -2,6 +2,9 @@
 name = "noizen"
 version = "0.1.0"
 edition = "2024"
+description = "An offline foreground ambient sound mixer"
+repository = "https://github.com/nendix/noizen"
+homepage = "https://github.com/nendix/noizen"
 
 [dependencies]
 clap = { version = "4.6.7", features = ["derive"] }
@@ -15,3 +18,8 @@ toml = "1.1.8"
 
 [dev-dependencies]
 rustfft = "6.4.1"
+
+# The profile that 'dist' will build with
+[profile.dist]
+inherits = "release"
+lto = "thin"

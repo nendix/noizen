@@ -1,0 +1,21 @@
+# This hook runs before dist's dependency-install step, so install ALSA here.
+- name: Install Linux audio build dependencies
+  if: runner.os == 'Linux'
+  run: sudo apt-get update && sudo apt-get install -y pkg-config libasound2-dev
+
+- name: Install stable Rust
+  uses: dtolnay/rust-toolchain@stable
+  with:
+    components: rustfmt, clippy
+
+- name: Check quality and prepare release extras
+  shell: bash
+  run: |
+    cargo fmt --check
+    cargo clippy --locked --all-targets -- -D warnings
+    cargo test --locked
+    mkdir -p target/release-extras/assets target/release-extras/completions
+    cp assets/README.md assets/CC-BY-4.0.txt target/release-extras/assets/
+    for shell in bash zsh fish; do
+      cargo run --locked --profile dist -- completions "$shell" > "target/release-extras/completions/noizen.$shell"
+    done

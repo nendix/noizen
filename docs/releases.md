@@ -1,80 +1,95 @@
-# Releases and Homebrew
+# Releases with cargo-dist
 
-Release automation is prepared, **not published or tested on GitHub yet**.
-The existing `nendix/homebrew-tap` has no noizen formula yet. Nothing is pushed
-or published by local development commands.
+Configured with **cargo-dist 0.33.1**. No release or Homebrew formula has been
+published yet; the GitHub workflow and real Homebrew installation remain unverified.
 
-## Manual release process
+## Maintain the workflow
 
-1. Update `Cargo.toml`/`Cargo.lock` to the intended version and push the reviewed
-   code, including `.github/workflows/release.yml`, to the default branch.
-2. Create and push the matching tag, then explicitly start the workflow:
+```sh
+brew install cargo-dist
+dist generate
+dist generate --check
+```
+
+Edit `dist-workspace.toml` and `.github/dist-build-setup.yml`, then regenerate.
+Do not hand-edit `.github/workflows/release.yml`. Keep the local dist version in
+sync with `cargo-dist-version`. The setup hook installs ALSA before compiling,
+runs quality checks, and prepares recording notices and static completions.
+
+Local archive check (the CI setup hook is not run by local `dist build`):
+
+```sh
+mkdir -p target/release-extras/assets target/release-extras/completions
+cp assets/README.md assets/CC-BY-4.0.txt target/release-extras/assets/
+for shell in bash zsh fish; do
+  cargo run --locked --profile dist -- completions "$shell" > "target/release-extras/completions/noizen.$shell"
+done
+dist build --artifacts=all --target aarch64-apple-darwin
+```
+
+Choose your native target. Outputs go to `target/distrib/`; this command does not
+publish anything. Source archives reflect committed files, so commit before
+checking their contents.
+
+## Manually release
+
+1. Set the Cargo version, run checks and push the reviewed code to the default
+   branch. The workflow must be present there before GitHub can dispatch it.
+2. Add repository secret `HOMEBREW_TAP_TOKEN`: a token scoped to
+   `nendix/homebrew-tap` with Contents read/write access. It enables the generated
+   publisher to commit the formula to the existing tap. Do not commit the token.
+3. Run **Actions → Release → Run workflow** with tag **`dry-run`** first:
 
    ```sh
-   git tag v0.1.0
-   git push origin v0.1.0
-   gh workflow run release.yml --repo nendix/noizen --ref main -f tag=v0.1.0
+   gh workflow run release.yml --repo nendix/noizen --ref main -f tag=dry-run
    ```
 
-   Alternatively use **Actions → Release → Run workflow**, entering the tag.
-   Pushing code or tags alone does **not** trigger a release. The workflow checks
-   out the existing tag and requires it to match the Cargo version.
+   This builds downloadable workflow artifacts without publishing a release or
+   updating the tap. Inspect checksums/notices and test the actual binaries.
+4. When ready, manually run again with the matching version, e.g. `v0.1.0`.
+   **This publishes a GitHub Release and updates the Homebrew tap**, not merely a
+   draft. Unlike the previous custom workflow, cargo-dist can create the tag for
+   the selected workflow ref; a pre-existing tag is not required. If using an
+   existing tag, select that same ref, not a different commit.
 
-3. Inspect the workflow results and **draft** release. It contains four archives,
-   `SHA256SUMS`, and a generated macOS Homebrew formula (`noizen.rb`). Each archive
-   includes the binary, static completions, documentation and recording notices.
-   All four builds run formatting, clippy, Rust and packaging tests, plus a
-   `--version` smoke check. None proves audible playback.
-4. Download the draft assets using `gh release download`, check the archive
-   contents/checksums and test the real binaries on their intended platforms.
-   Keep the release an MVP candidate while listening acceptance is outstanding.
-5. Publish explicitly when ready:
+Pushing code or tags alone never publishes. Pull requests run release-plan
+checks only. The default dispatch tag is `dry-run`. Prerelease versions do not
+update Homebrew by default. Keep MVP acceptance limitations visible in release
+notes; packaging does not prove audible playback.
 
-   ```sh
-   gh release edit v0.1.0 --repo nendix/noizen --draft=false
-   ```
+## Artifacts and installation
 
-6. Copy the generated `noizen.rb` into `Formula/noizen.rb` in a checkout of
-   `nendix/homebrew-tap`, review it, commit and push that tap separately. The
-   workflow deliberately has no cross-repository token or automatic tap push.
-   Once updated, verify `brew install nendix/tap/noizen` and
-   `brew test nendix/tap/noizen` on both supported Mac architectures.
+Four native GNU/macOS archives, per-archive SHA-256 files, `sha256.sum`, a source
+archive and a Homebrew formula are generated. Binary archives contain
+`assets/README.md`, the CC BY legal text, shell completion scripts, and
+documentation. Homebrew retains extras under `$(brew --prefix)/share/noizen/`;
+install completions using [the shell setup guide](completions.md).
 
-If a build fails, no draft is created. Re-run failed jobs after diagnosing it;
-do not move an already published version tag or replace its checksummed assets.
-Creating a release for an already existing release tag fails rather than
-silently replacing it.
-
-## User installation, after publication
-
-macOS:
+After the first successful published release and tap update, macOS users can run:
 
 ```sh
 brew install nendix/tap/noizen
 ```
 
-The formula installs the matching prebuilt binary, completions and recording
-notices. It does not build Rust or initialize audio. Homebrew support here is
-macOS-only; Linux users use the release archive.
+| Target | Native build runner |
+| --- | --- |
+| aarch64-apple-darwin | macOS 15 ARM |
+| x86_64-apple-darwin | macOS 15 Intel |
+| aarch64-unknown-linux-gnu | Ubuntu 24.04 ARM |
+| x86_64-unknown-linux-gnu | Ubuntu 24.04 x86_64 |
 
-For an archive install, choose the matching target from GitHub Releases:
+Linux users should use the matching archive and verify its checksum. GNU builds
+require compatible glibc (Ubuntu 24.04 uses 2.39), `libasound.so.2` and configured
+OS audio output; Alpine/musl is unsupported. Homebrew's generated formula also
+contains Linux downloads, but Linuxbrew dependency resolution is unverified and
+is not the supported Linux installation path yet. macOS uses system frameworks.
+Older macOS compatibility and Gatekeeper behavior remain unverified; no
+Developer ID signing/notarization is configured. Retain recording notices when
+redistributing. No Rust toolchain, player or codec command is needed at runtime.
 
-| Target | Platform / CPU | Build runner |
-| --- | --- | --- |
-| aarch64-apple-darwin | macOS / Apple Silicon | macOS 15 ARM |
-| x86_64-apple-darwin | macOS / Intel | macOS 15 Intel |
-| aarch64-unknown-linux-gnu | Linux / ARM64 | Ubuntu 24.04 ARM |
-| x86_64-unknown-linux-gnu | Linux / Intel or AMD 64-bit | Ubuntu 24.04 x86_64 |
+## Migration status
 
-Verify with `shasum -a 256 -c SHA256SUMS` (macOS) or `sha256sum -c SHA256SUMS`
-(Linux), with all four archives present, then extract the appropriate archive
-and copy `noizen` to a directory on PATH. Keep its `assets/` notices when
-redistributing. Archive completions can be installed using
-[the shell setup guide](completions.md).
-
-Linux GNU builds require glibc compatible with the Ubuntu 24.04 build environment
-(glibc 2.39), `libasound.so.2`, and configured audio output. They are not static
-binaries and are not suitable for Alpine/musl. macOS builds use system audio
-frameworks; older macOS compatibility and Gatekeeper behavior are not verified.
-No signing/notarization is configured. Rust and codec/player commands are not
-needed by the installed application.
+The custom Python packager/tests were removed; cargo-dist owns archive,
+checksum, formula and workflow generation. There were no published releases to
+migrate. Reverting this migration commit restores the previous pipeline; never
+replace assets or move tags for an already published version.
