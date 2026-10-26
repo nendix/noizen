@@ -1,8 +1,8 @@
 # Embedded recordings and attribution
 
-These licenses cover the recordings only, not noizen's source code. No
-source-code license has been declared for noizen. No Blanket application code
-is copied; Blanket's application license is not the license for these recordings.
+These licenses cover the recordings only. noizen's source code is licensed
+under MIT; that license does not relicense the recordings. No Blanket application
+code is copied; Blanket's application license is not the license for these recordings.
 
 ## Rain
 
@@ -41,5 +41,5 @@ SHA-256:
 
 noizen decodes to mono 44.1 kHz and overlaps the last/first 100 ms with a linear
 crossfade in memory; the embedded files remain unchanged. Distributions must
-retain this attribution and the CC BY license notice. This attribution is embedded in `noizen --help`;
-binary distributors should also ship these notices alongside the executable.
+retain this attribution and the CC BY license notice. Release archives ship
+these notices alongside the executable.

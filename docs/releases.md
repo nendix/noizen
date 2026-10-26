@@ -59,7 +59,7 @@ audible playback.
 
 Four native GNU/macOS archives, per-archive SHA-256 files, `sha256.sum`, a source
 archive and a Homebrew formula are generated. Binary archives contain
-the binary, README, `assets/README.md` and the CC BY legal text. Developer docs,
+the binary, README, MIT `LICENSE`, `assets/README.md` and the CC BY legal text. Developer docs,
 `AGENTS.md` and completion scripts are not bundled. Homebrew retains recording
 notices under `$(brew --prefix)/share/noizen/`. For completions,
 generate them with `noizen completions` as described in

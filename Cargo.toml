@@ -2,6 +2,7 @@
 name = "noizen"
 version = "0.1.0"
 edition = "2024"
+license = "MIT"
 description = "An offline foreground ambient sound mixer"
 repository = "https://github.com/nendix/noizen"
 homepage = "https://github.com/nendix/noizen"

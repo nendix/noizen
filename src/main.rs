@@ -9,7 +9,7 @@ use std::io::{self, Write};
 use clap::{CommandFactory, Parser, Subcommand, ValueEnum};
 
 #[derive(Parser)]
-#[command(version, about = "An offline foreground ambient sound mixer", after_long_help = include_str!("../assets/README.md"))]
+#[command(version, about = "An offline foreground ambient sound mixer")]
 struct Cli {
     #[command(subcommand)]
     command: Command,
@@ -114,6 +114,14 @@ fn run(cli: Cli) -> Result<(), Box<dyn std::error::Error>> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn help_stays_focused_on_usage() {
+        let help = Cli::command().render_long_help().to_string();
+        assert!(help.contains("play"));
+        assert!(!help.contains("Embedded recordings"));
+        assert!(!help.contains("SHA-256"));
+    }
 
     #[test]
     fn command_definitions_are_valid() {
