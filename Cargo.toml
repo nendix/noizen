@@ -7,4 +7,11 @@ edition = "2024"
 clap = { version = "4.6.7", features = ["derive"] }
 clap_complete = "4.6.11"
 ctrlc = "3.5.2"
-rodio = { version = "0.21", default-features = false, features = ["playback", "wav"] }
+directories = "6.0.0"
+rodio = { version = "0.21", default-features = false, features = ["playback", "vorbis", "wav"] }
+serde = { version = "1.0.229", features = ["derive"] }
+tempfile = "3.27.0"
+toml = "1.1.8"
+
+[dev-dependencies]
+rustfft = "6.4.1"

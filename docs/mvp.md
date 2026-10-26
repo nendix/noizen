@@ -53,38 +53,38 @@ presets must not be silently overwritten.
 ### CLI and playback
 
 - [ ] Play each of the eight sound IDs individually and in arbitrary blends.
-- [ ] Validate unknown IDs, malformed blends, and out-of-range levels with useful errors and nonzero exits.
-- [ ] Per-source levels and overall volume work without clipping the final mix.
+- [x] Validate unknown IDs, malformed blends, and out-of-range levels with useful errors and nonzero exits.
+- [x] Per-source levels and overall volume work without clipping the final mix (tested numerically; listening pending).
 - [ ] Stay in the foreground; Ctrl-C stops playback and releases the audio device.
-- [ ] Missing/unavailable audio devices produce useful errors, not panics.
-- [ ] Each noise generator has bounded, stable output and a tested approximate target spectrum over a documented frequency range.
+- [x] Missing/unavailable audio devices produce useful errors, not panics (Linux container with no output).
+- [x] Each noise generator has bounded, stable output and a tested approximate target spectrum over a documented frequency range.
 - [ ] Recordings loop without audible clicks or gaps; listen on actual hardware.
 
 ### Assets and distribution
 
-- [ ] Bundle rain and fireplace; all playback works offline on first launch.
-- [ ] Record sources, licenses, and required attribution for every recording.
-- [ ] No external player or codec executable required at runtime.
-- [ ] Build and test on Linux and macOS; document audio-library/runtime requirements.
+- [x] Bundle rain and fireplace; all playback works offline on first launch (embedded decode tested; audible verification pending).
+- [x] Record sources, licenses, and required attribution for every recording.
+- [x] No external player or codec executable required at runtime.
+- [x] Build and test on Linux and macOS; document audio-library/runtime requirements (Linux arm64 container, macOS arm64 host; Linux hardware playback pending).
 - [ ] Publish release binaries with platform and architecture labels.
 - [ ] Measure release size, steady-state CPU, and memory for individual sounds and a blend; document hardware and results. Agree numerical budgets after the prototype, before declaring MVP complete.
 
 ### Presets
 
-- [ ] Save, list, play, and remove named blends, surviving application restarts.
-- [ ] Store only sound IDs and individual levels, not overall volume.
-- [ ] Use the platform-standard configuration directory.
-- [ ] Reject invalid persisted content with useful errors; failed writes preserve existing data.
-- [ ] Prevent accidental overwrite and path traversal via preset labels.
+- [x] Save, list, play, and remove named blends, surviving application restarts (persistence tested; preset playback shares the mixer).
+- [x] Store only sound IDs and individual levels, not overall volume.
+- [x] Use the platform-standard configuration directory.
+- [x] Reject invalid persisted content with useful errors; failed writes preserve existing data.
+- [x] Prevent accidental overwrite and path traversal via preset labels.
 
 ### Completions and quality
 
 - [x] Generate static scripts for Bash, Zsh, and Fish from clap definitions.
-- [ ] Document and smoke-test shell installation and command/flag completion in all three shells.
-- [ ] Time-box dynamic completion assessment; either implement sound/preset suggestions simply across all three shells, or document their deferral. Completion must stay offline and must not initialize audio.
+- [x] Document and smoke-test shell installation and command/flag completion in all three shells (Bash 3.2, Zsh 5.9 on macOS; Fish 4.0.2 in Linux container).
+- [x] Time-box dynamic completion assessment; either implement sound/preset suggestions simply across all three shells, or document their deferral. Completion must stay offline and must not initialize audio. Deferred: static clap generation has no common runtime preset lookup; custom per-shell/experimental integration is not justified.
 - [x] Scaffold Rust project and focused CLI tests.
 - [ ] CI passes formatting, clippy, and tests on Linux and macOS.
-- [ ] README clearly documents commands, presets, installation, and limitations.
+- [x] README clearly documents commands, presets, installation, and limitations.
 
 ## Non-goals
 
@@ -102,6 +102,16 @@ downloads, remote catalog, plugin system, grey noise, or black noise.
 
 ## Current status
 
-Only help, planned sound listing, and static completion generation are implemented.
-Playback, assets, and preset persistence are not implemented. No audio backend has
-been added yet. No recording licenses or hardware playback have been verified.
+Implemented MVP candidate, **not acceptance-complete**. Rodio backend, all six
+noise generators, bounds-preserving mixing, embedded licensed Vorbis recordings
+with crossfaded loops, TOML presets, and static completions are implemented.
+Recording rights were verified against original source pages; attribution and
+license notices are in `assets/` and embedded help. Tests cover parsing,
+persistence/failures, approximate spectra/stability, decode/loop boundaries and
+mixing bounds. See [validation evidence](audio-validation.md).
+
+Still required: human listening to each sound/blends and multiple recording loop
+boundaries; confirm acoustic shutdown/device release and the provisional 50%
+default; Linux hardware playback; agreed numerical performance budgets; remote
+CI on this revision and published platform/architecture release binaries.
+No push or release publication was performed.
