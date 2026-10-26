@@ -8,6 +8,9 @@ agreement, and published releases remain pending. See [MVP status](docs/mvp.md).
 
 ## Install
 
+[Prebuilt releases and macOS Homebrew setup](docs/releases.md) are prepared but
+not published yet. For now, build from source.
+
 Requires stable Rust. Linux builds also need `pkg-config libasound2-dev`
 (Debian/Ubuntu) or `pkgconf-pkg-config alsa-lib-devel` (Fedora).
 
@@ -19,7 +22,7 @@ install -m 755 target/release/noizen ~/.local/bin/noizen
 
 Add `~/.local/bin` to your PATH. Linux runtime requires `libasound.so.2` and a
 configured ALSA output (possibly PipeWire/PulseAudio ALSA integration).
-macOS uses system CoreAudio. No release binaries are published yet.
+macOS uses system CoreAudio.
 
 ## Use
 

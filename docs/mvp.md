@@ -117,4 +117,8 @@ Still required: human listening to each sound/blends and multiple recording loop
 boundaries; confirm acoustic shutdown/device release and assess listening levels
 with the agreed 100% default; Linux hardware playback; agreed numerical performance budgets; remote
 CI on this revision and published platform/architecture release binaries.
-No push or release publication was performed.
+A manual-only release workflow prepares four platform/architecture archives,
+checksums and a macOS Homebrew formula for the existing tap; it creates a draft,
+not a public release. See [release instructions](releases.md). The workflow and
+Homebrew installation have not yet been exercised on GitHub. No push, tap update
+or release publication was performed.
