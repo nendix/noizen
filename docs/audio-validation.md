@@ -19,7 +19,11 @@ playback**. No person has confirmed sound, loop quality, loudness, or acoustic
 shutdown. Those acceptance gates remain open. SIGINT tests exercised the same
 handler as terminal Ctrl-C, but were sent programmatically.
 
-## Final application measurements
+## Pre-calibration application measurements (2475bdb)
+
+These measurements precede the 100% default and generated-noise gain changes.
+[Offline noise calibration](noise-calibration.md) now matches generated colors
+using fixed attenuation; no new hardware playback/resource run was performed.
 
 Same host/output; `cargo build --release`, each sound and all eight together at
 `--volume 1`, 20-second runs. Sampled `ps -p PID -o time=,rss=` at roughly 5, 10,
@@ -115,7 +119,8 @@ audio initialization is needed by completions.
 - Human listening to all eight IDs, blends, level behavior and several loops
   (rain ~124.5 seconds, fireplace ~25.4 seconds after overlap).
 - Confirm no audible loop clicks/gaps and acoustic shutdown/device release.
-- Accept/change provisional 50% overall default and proposed resource budgets.
+- Assess listening levels with the operator-selected 100% overall default;
+  agree proposed resource budgets. Historical measurements above used explicit 1%.
 - Linux hardware playback/resource measurements; broader architectures.
 - Remote CI for these local commits and platform-labelled published releases.
 

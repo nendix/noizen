@@ -3,6 +3,7 @@ pub const RATE: u32 = 44_100;
 pub struct Noise {
     color: String,
     rng: u64,
+    gain: f32,
     pink: [f64; 7],
     brown: f64,
     previous: f64,
@@ -16,6 +17,16 @@ impl Noise {
         Self {
             color: color.into(),
             rng: seed.max(1),
+            // Mono -30 LUFS calibration; see docs/noise-calibration.md.
+            gain: match color {
+                "white" => 0.039084,
+                "pink" => 0.190766,
+                "brown" => 0.427071,
+                "blue" => 0.423156,
+                "violet" => 0.054702,
+                "green" => 0.452376,
+                _ => 1.0,
+            },
             pink: [0.0; 7],
             brown: 0.0,
             previous: 0.0,
@@ -70,7 +81,7 @@ impl Noise {
                 }
             }
         };
-        value.clamp(-1.0, 1.0) as f32
+        value.clamp(-1.0, 1.0) as f32 * self.gain
     }
 }
 
@@ -130,6 +141,22 @@ mod tests {
         assert!(band(&p, 400.0, 600.0) > band(&p, 40.0, 100.0) * 2.0);
         assert!(band(&p, 400.0, 600.0) > band(&p, 4000.0, 6000.0) * 10.0);
     }
+    #[test]
+    fn calibration_only_attenuates_without_changing_shape() {
+        for color in ["white", "pink", "brown", "blue", "violet", "green"] {
+            let mut calibrated = Noise::new(color, 123);
+            let mut raw = Noise::new(color, 123);
+            raw.gain = 1.0;
+            assert!(calibrated.gain > 0.0 && calibrated.gain < 1.0);
+            for _ in 0..RATE {
+                let input = raw.sample();
+                let output = calibrated.sample();
+                assert_eq!(output, input * calibrated.gain);
+                assert!(output.is_finite() && output.abs() <= input.abs());
+            }
+        }
+    }
+
     #[test]
     fn stable_over_time() {
         for color in ["white", "pink", "brown", "blue", "violet", "green"] {

@@ -43,7 +43,8 @@ noizen completions fish
 ```
 
 Levels are integers from 0 to 100; omitted source levels default to 100.
-Proposed overall-volume default: 50%, pending listening checks. This setting is
+Agreed overall-volume default: 100%. Use `--volume` to attenuate noizen without
+changing system volume. This setting is
 not a guarantee of safe acoustic loudness; device volume still matters.
 Preset labels must not be usable to escape the configuration directory. Existing
 presets must not be silently overwritten.
@@ -108,10 +109,12 @@ with crossfaded loops, TOML presets, and static completions are implemented.
 Recording rights were verified against original source pages; attribution and
 license notices are in `assets/` and embedded help. Tests cover parsing,
 persistence/failures, approximate spectra/stability, decode/loop boundaries and
-mixing bounds. See [validation evidence](audio-validation.md).
+mixing bounds. Generated colors now use fixed attenuation to target -30 LUFS
+mono, verified offline across three seeds; recordings are unchanged. See
+[noise calibration](noise-calibration.md) and [validation evidence](audio-validation.md).
 
 Still required: human listening to each sound/blends and multiple recording loop
-boundaries; confirm acoustic shutdown/device release and the provisional 50%
-default; Linux hardware playback; agreed numerical performance budgets; remote
+boundaries; confirm acoustic shutdown/device release and assess listening levels
+with the agreed 100% default; Linux hardware playback; agreed numerical performance budgets; remote
 CI on this revision and published platform/architecture release binaries.
 No push or release publication was performed.

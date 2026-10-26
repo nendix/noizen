@@ -46,9 +46,14 @@ ones, then applies overall volume; adding sources can reduce existing sources'
 loudness. This deliberately reserves headroom, rather than clipping a sum.
 Generated noise and decoded recordings are bounded to [-1, 1]. Noise spectra
 are tested approximately over 200–3200 Hz at 44.1 kHz; brown rolls off below
-about 7 Hz. Recordings decode once into memory and use a 100 ms loop crossfade.
+about 7 Hz. The six generated colors use fixed attenuation gains targeting
+**-30 LUFS mono** at full source/overall levels. This approximately matches their
+loudness, not their spectra; recordings are unchanged. See
+[calibration measurements and the offline regression check](docs/noise-calibration.md).
+Recordings decode once into memory and use a 100 ms loop crossfade.
 
-Overall `--volume` defaults to **50% provisionally, pending listening checks**.
+Overall `--volume` defaults to **100%**. Lower it to keep noizen quieter than
+other applications without changing system volume.
 This is not a safe acoustic loudness guarantee. Start low and check device volume.
 There is no duration flag, daemon, background service, or TUI.
 

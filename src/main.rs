@@ -23,7 +23,7 @@ enum Command {
     Play {
         #[arg(required = true)]
         sounds: Vec<Sound>,
-        #[arg(long, default_value_t = 50, value_parser = clap::value_parser!(u8).range(0..=100))]
+        #[arg(long, default_value_t = 100, value_parser = clap::value_parser!(u8).range(0..=100))]
         volume: u8,
     },
     /// Save, play, list or remove named blends
@@ -44,7 +44,7 @@ enum PresetCommand {
     },
     Play {
         label: String,
-        #[arg(long, default_value_t = 50, value_parser = clap::value_parser!(u8).range(0..=100))]
+        #[arg(long, default_value_t = 100, value_parser = clap::value_parser!(u8).range(0..=100))]
         volume: u8,
     },
     List,
@@ -152,6 +152,25 @@ mod tests {
             vec!["noizen", "preset", "save", "cozy"],
         ] {
             assert!(Cli::try_parse_from(args).is_err());
+        }
+    }
+
+    #[test]
+    fn playback_volume_defaults_and_overrides() {
+        for (args, expected) in [
+            (vec!["noizen", "play", "white"], 100),
+            (vec!["noizen", "preset", "play", "cozy"], 100),
+            (vec!["noizen", "play", "white", "--volume", "5"], 5),
+            (vec!["noizen", "preset", "play", "cozy", "--volume", "0"], 0),
+        ] {
+            let volume = match Cli::try_parse_from(args).unwrap().command {
+                Command::Play { volume, .. }
+                | Command::Preset {
+                    command: PresetCommand::Play { volume, .. },
+                } => volume,
+                _ => panic!("expected playback"),
+            };
+            assert_eq!(volume, expected);
         }
     }
 
