@@ -5,7 +5,12 @@ integrated for mono** at source level 100 and overall volume 100. This reduces
 large level differences without adding a limiter, automatic gain control, new
 runtime dependency, or audio processing command. Preset levels and the 100%
 overall default are unchanged; existing presets containing noise will be quieter.
-Recordings are **not** recalibrated by this change.
+Recordings are **intentionally not loudness-matched**. Rain and fireplace keep
+their existing decode/crossfade path, with no added gain, compression or limiting.
+Offline 500-second looped renders measured rain at -32.54 LUFS / -6.26 dBTP and
+fireplace at -41.81 LUFS / -9.09 dBTP. Raising fireplace to -30 LUFS would exceed
+the digital peak ceiling; we chose to preserve its dynamics instead. Fireplace
+will be quieter at equal source levels; lower other sources when blending it.
 
 ## Method
 
